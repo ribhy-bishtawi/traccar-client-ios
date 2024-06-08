@@ -9,6 +9,7 @@ class TrackingNumberViewController: UIViewController {
     let trackingNumberText = UILabel()
     let copyButton = UIButton(type: .system)
     let recordButton = UIButton(type: .system)
+    var rippleLayer: CAReplicatorLayer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,7 +70,7 @@ class TrackingNumberViewController: UIViewController {
         containerView.addSubview(copyButton)
         
         // Set up record button
-        recordButton.setTitle("بدأ التتبع", for: .normal) // Arabic for "Pause"
+        recordButton.setTitle("بدأ التتبع", for: .normal) // Arabic for "Start Tracking"
         recordButton.backgroundColor = UIColor(hex: "#219173")
         recordButton.setTitleColor(.white, for: .normal)
         recordButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 20) // Add space between text and image
@@ -104,10 +105,12 @@ class TrackingNumberViewController: UIViewController {
         
         if recordButton.backgroundColor == UIColor(hex: "#219173") {
             recordButton.backgroundColor = UIColor(hex: "#FB1D1D")
-            recordButton.setTitle("إيقاف التتبع", for: .normal) // Arabic for "Recording"
+            recordButton.setTitle("إيقاف التتبع", for: .normal) // Arabic for "Stop Tracking"
             // Add recording icon
             let recordingIcon = UIImage(systemName: "record.circle.fill")?.withRenderingMode(.alwaysTemplate)
             recordButton.setImage(recordingIcon, for: .normal)
+            recordButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8) // Add space between image and text
+            recordButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0) // Add space between text and image
             
             // Start tracking
             let url = userDefaults.string(forKey: "server_url_preference")
@@ -123,20 +126,68 @@ class TrackingNumberViewController: UIViewController {
                 AppDelegate.instance.trackingController = TrackingController()
                 AppDelegate.instance.trackingController?.start()
                 userDefaults.setValue(true, forKey: "service_status_preference")
+                
+                // Start ripple effect
+                startRippleEffect()
             }
             
         } else {
             recordButton.backgroundColor = UIColor(hex: "#219173")
-            recordButton.setTitle("بدأ التتبع", for: .normal) // Arabic for "Pause"
+            recordButton.setTitle("بدأ التتبع", for: .normal) // Arabic for "Start Tracking"
             // Add pause icon
             let pauseIcon = UIImage(systemName: "pause.circle.fill")?.withRenderingMode(.alwaysTemplate)
             recordButton.setImage(pauseIcon, for: .normal)
+            recordButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8) // Add space between image and text
+            recordButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0) // Add space between text and image
             
             // Stop tracking
             AppDelegate.instance.trackingController?.stop()
             AppDelegate.instance.trackingController = nil
             userDefaults.setValue(false, forKey: "service_status_preference")
+            
+            // Stop ripple effect
+            stopRippleEffect()
         }
+    }
+    
+    func startRippleEffect() {
+        rippleLayer?.removeFromSuperlayer() // Remove existing ripple layer if any
+        
+        let rippleLayer = CAReplicatorLayer()
+        rippleLayer.frame = view.bounds
+        view.layer.insertSublayer(rippleLayer, below: logoImageView.layer)
+        
+        let circle = CALayer()
+        circle.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+        circle.position = logoImageView.center
+        circle.cornerRadius = 50
+        circle.borderColor = UIColor.white.cgColor // Change to white color
+        circle.borderWidth = 2
+        circle.opacity = 0
+        rippleLayer.addSublayer(circle)
+        
+        let animation = CABasicAnimation(keyPath: "transform.scale")
+        animation.fromValue = 1.0
+        animation.toValue = 4.0 // Increase the scale value to reach more space
+        animation.duration = 3.0 // Increase the duration to make the circle stay longer
+        animation.repeatCount = .infinity
+        circle.add(animation, forKey: "rippleEffect")
+        
+        let opacityAnimation = CABasicAnimation(keyPath: "opacity")
+        opacityAnimation.fromValue = 1.0
+        opacityAnimation.toValue = 0.0
+        opacityAnimation.duration = 3.0 // Match the duration to the scale animation
+        opacityAnimation.repeatCount = .infinity
+        circle.add(opacityAnimation, forKey: "rippleOpacity")
+        
+        rippleLayer.instanceCount = 3
+        rippleLayer.instanceDelay = 1.0 // Increase the delay between each circle
+        
+        self.rippleLayer = rippleLayer
+    }
+
+    func stopRippleEffect() {
+        rippleLayer?.removeFromSuperlayer()
     }
     
     func showError(_ message: String) {
