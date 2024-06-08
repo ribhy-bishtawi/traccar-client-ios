@@ -3,6 +3,7 @@ import UIKit
 class TrackingNumberViewController: UIViewController {
     
     let imageView = UIImageView()
+    let logoImageView = UIImageView()
     let containerView = UIView()
     let trackingNumberLabel = UILabel()
     let trackingNumberText = UILabel()
@@ -17,7 +18,10 @@ class TrackingNumberViewController: UIViewController {
         
         // Set up UI elements
         setupUI()
-        
+        if let identifier = UserDefaults.standard.string(forKey: "device_id_preference") {
+            trackingNumberText.text = identifier
+        }
+
         // Ensure the layout is RTL
         if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
             adjustForRTL()
@@ -31,6 +35,14 @@ class TrackingNumberViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(imageView)
         
+        // Set up logo image view
+        logoImageView.image = UIImage(named: "logo") // Replace with your logo image name
+        logoImageView.contentMode = .scaleAspectFit
+        logoImageView.layer.cornerRadius = 50 // Adjust the radius to half of the logo's width/height for a circular shape
+        logoImageView.clipsToBounds = true
+        logoImageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.addSubview(logoImageView) // Add to imageView instead of view
+        
         // Set up container view
         containerView.backgroundColor = UIColor.white.withAlphaComponent(0.95) // Slightly transparent
         containerView.layer.cornerRadius = 10
@@ -40,25 +52,27 @@ class TrackingNumberViewController: UIViewController {
         view.addSubview(containerView)
         
         // Set up tracking number label
-        trackingNumberLabel.text = "رقم التتبع:" // Arabic for "Tracking Number:"
+        trackingNumberLabel.text = "رقم التتبع" // Arabic for "Tracking Number:"
         trackingNumberLabel.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(trackingNumberLabel)
         
         // Set up tracking number text
-        trackingNumberText.text = "123456"
         trackingNumberText.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(trackingNumberText)
         
         // Set up copy button
-        copyButton.setTitle("نسخ", for: .normal) // Arabic for "Copy"
+        let copyIcon = UIImage(systemName: "doc.on.doc")?.withRenderingMode(.alwaysTemplate)
+        copyButton.setImage(copyIcon, for: .normal)
+        copyButton.tintColor = .systemBlue
         copyButton.addTarget(self, action: #selector(copyButtonTapped), for: .touchUpInside)
         copyButton.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(copyButton)
         
         // Set up record button
-        recordButton.setTitle("إيقاف", for: .normal) // Arabic for "Pause"
+        recordButton.setTitle("بدأ التتبع", for: .normal) // Arabic for "Pause"
         recordButton.backgroundColor = UIColor(hex: "#219173")
         recordButton.setTitleColor(.white, for: .normal)
+        recordButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 20) // Add space between text and image
         recordButton.layer.cornerRadius = 10 // Half of the height to make it fully rounded
         recordButton.clipsToBounds = true
         recordButton.tintColor = .white // Set the tint color to white
@@ -86,19 +100,52 @@ class TrackingNumberViewController: UIViewController {
     }
     
     @objc func recordButtonTapped() {
+        let userDefaults = UserDefaults.standard
+        
         if recordButton.backgroundColor == UIColor(hex: "#219173") {
             recordButton.backgroundColor = UIColor(hex: "#FB1D1D")
-            recordButton.setTitle("تسجيل", for: .normal) // Arabic for "Recording"
+            recordButton.setTitle("إيقاف التتبع", for: .normal) // Arabic for "Recording"
             // Add recording icon
             let recordingIcon = UIImage(systemName: "record.circle.fill")?.withRenderingMode(.alwaysTemplate)
             recordButton.setImage(recordingIcon, for: .normal)
+            
+            // Start tracking
+            let url = userDefaults.string(forKey: "server_url_preference")
+            let frequency = userDefaults.integer(forKey: "frequency_preference")
+            
+            let candidateUrl = NSURL(string: url ?? "")
+            
+            if candidateUrl == nil || candidateUrl?.host == nil || (candidateUrl?.scheme != "http" && candidateUrl?.scheme != "https") {
+                showError("Invalid server URL")
+            } else if frequency <= 0 {
+                showError("Invalid frequency value")
+            } else {
+                AppDelegate.instance.trackingController = TrackingController()
+                AppDelegate.instance.trackingController?.start()
+                userDefaults.setValue(true, forKey: "service_status_preference")
+            }
+            
         } else {
             recordButton.backgroundColor = UIColor(hex: "#219173")
-            recordButton.setTitle("إيقاف", for: .normal) // Arabic for "Pause"
+            recordButton.setTitle("بدأ التتبع", for: .normal) // Arabic for "Pause"
             // Add pause icon
             let pauseIcon = UIImage(systemName: "pause.circle.fill")?.withRenderingMode(.alwaysTemplate)
             recordButton.setImage(pauseIcon, for: .normal)
+            
+            // Stop tracking
+            AppDelegate.instance.trackingController?.stop()
+            AppDelegate.instance.trackingController = nil
+            userDefaults.setValue(false, forKey: "service_status_preference")
         }
+    }
+    
+    func showError(_ message: String) {
+        let alert = UIAlertController(title: nil, message: NSLocalizedString(message, comment: ""), preferredStyle: .alert)
+        let defaultAction = UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
+            UserDefaults.standard.setValue(nil, forKey: "service_status_preference")
+        })
+        alert.addAction(defaultAction)
+        present(alert, animated: true)
     }
 
     func setupConstraints() {
@@ -108,6 +155,14 @@ class TrackingNumberViewController: UIViewController {
             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             imageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.8) // Image view takes 80% of the screen height
+        ])
+        
+        // Logo image view constraints
+        NSLayoutConstraint.activate([
+            logoImageView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            logoImageView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+            logoImageView.widthAnchor.constraint(equalToConstant: 100),
+            logoImageView.heightAnchor.constraint(equalToConstant: 100)
         ])
         
         // Container view constraints
@@ -133,8 +188,9 @@ class TrackingNumberViewController: UIViewController {
         // Copy button constraints
         NSLayoutConstraint.activate([
             copyButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
-            copyButton.trailingAnchor.constraint(equalTo: trackingNumberText.leadingAnchor, constant: -10),
-            copyButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
+            copyButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            copyButton.widthAnchor.constraint(equalToConstant: 24), // Adjust width for the icon
+            copyButton.heightAnchor.constraint(equalToConstant: 24) // Adjust height for the icon
         ])
         
         // Record button constraints
