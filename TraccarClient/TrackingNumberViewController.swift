@@ -12,8 +12,16 @@ class TrackingNumberViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Set the background color of the view to white
+        view.backgroundColor = .white
+        
         // Set up UI elements
         setupUI()
+        
+        // Ensure the layout is RTL
+        if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
+            adjustForRTL()
+        }
     }
     
     func setupUI() {
@@ -24,7 +32,7 @@ class TrackingNumberViewController: UIViewController {
         view.addSubview(imageView)
         
         // Set up container view
-        containerView.backgroundColor = UIColor.white.withAlphaComponent(0.8) // Slightly transparent
+        containerView.backgroundColor = UIColor.white.withAlphaComponent(0.95) // Slightly transparent
         containerView.layer.cornerRadius = 10
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = UIColor.lightGray.cgColor
@@ -32,7 +40,7 @@ class TrackingNumberViewController: UIViewController {
         view.addSubview(containerView)
         
         // Set up tracking number label
-        trackingNumberLabel.text = "Tracking Number:"
+        trackingNumberLabel.text = "رقم التتبع:" // Arabic for "Tracking Number:"
         trackingNumberLabel.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(trackingNumberLabel)
         
@@ -42,21 +50,34 @@ class TrackingNumberViewController: UIViewController {
         containerView.addSubview(trackingNumberText)
         
         // Set up copy button
-        copyButton.setTitle("Copy", for: .normal)
+        copyButton.setTitle("نسخ", for: .normal) // Arabic for "Copy"
         copyButton.addTarget(self, action: #selector(copyButtonTapped), for: .touchUpInside)
         copyButton.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(copyButton)
         
         // Set up record button
-        recordButton.setTitle("Pause", for: .normal)
-        recordButton.backgroundColor = .green
+        recordButton.setTitle("إيقاف", for: .normal) // Arabic for "Pause"
+        recordButton.backgroundColor = UIColor(hex: "#219173")
         recordButton.setTitleColor(.white, for: .normal)
+        recordButton.layer.cornerRadius = 10 // Half of the height to make it fully rounded
+        recordButton.clipsToBounds = true
+        recordButton.tintColor = .white // Set the tint color to white
+
+        let pauseIcon = UIImage(systemName: "pause.circle.fill")?.withRenderingMode(.alwaysTemplate)
+        recordButton.setImage(pauseIcon, for: .normal)
         recordButton.addTarget(self, action: #selector(recordButtonTapped), for: .touchUpInside)
+        recordButton.semanticContentAttribute = .forceRightToLeft // To force icon on the left
         recordButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(recordButton)
         
         // Set up constraints
         setupConstraints()
+    }
+    
+    func adjustForRTL() {
+        trackingNumberLabel.textAlignment = .right
+        trackingNumberText.textAlignment = .right
+        copyButton.contentHorizontalAlignment = .left
     }
     
     @objc func copyButtonTapped() {
@@ -65,21 +86,21 @@ class TrackingNumberViewController: UIViewController {
     }
     
     @objc func recordButtonTapped() {
-        if recordButton.backgroundColor == .green {
-            recordButton.backgroundColor = .red
-            recordButton.setTitle("Recording", for: .normal)
+        if recordButton.backgroundColor == UIColor(hex: "#219173") {
+            recordButton.backgroundColor = UIColor(hex: "#FB1D1D")
+            recordButton.setTitle("تسجيل", for: .normal) // Arabic for "Recording"
             // Add recording icon
-            let recordingIcon = UIImage(systemName: "record.circle")
+            let recordingIcon = UIImage(systemName: "record.circle.fill")?.withRenderingMode(.alwaysTemplate)
             recordButton.setImage(recordingIcon, for: .normal)
         } else {
-            recordButton.backgroundColor = .green
-            recordButton.setTitle("Pause", for: .normal)
+            recordButton.backgroundColor = UIColor(hex: "#219173")
+            recordButton.setTitle("إيقاف", for: .normal) // Arabic for "Pause"
             // Add pause icon
-            let pauseIcon = UIImage(systemName: "pause.circle")
+            let pauseIcon = UIImage(systemName: "pause.circle.fill")?.withRenderingMode(.alwaysTemplate)
             recordButton.setImage(pauseIcon, for: .normal)
         }
     }
-    
+
     func setupConstraints() {
         // Image view constraints
         NSLayoutConstraint.activate([
@@ -99,21 +120,20 @@ class TrackingNumberViewController: UIViewController {
         
         // Tracking number label constraints
         NSLayoutConstraint.activate([
-            trackingNumberLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
-            trackingNumberLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            trackingNumberLabel.widthAnchor.constraint(equalToConstant: 120)
+            trackingNumberLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+            trackingNumberLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
         ])
         
         // Tracking number text constraints
         NSLayoutConstraint.activate([
-            trackingNumberText.leadingAnchor.constraint(equalTo: trackingNumberLabel.trailingAnchor, constant: 10),
-            trackingNumberText.trailingAnchor.constraint(equalTo: copyButton.leadingAnchor, constant: -10),
+            trackingNumberText.leadingAnchor.constraint(equalTo: copyButton.trailingAnchor, constant: 10),
             trackingNumberText.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
         ])
         
         // Copy button constraints
         NSLayoutConstraint.activate([
-            copyButton.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+            copyButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
+            copyButton.trailingAnchor.constraint(equalTo: trackingNumberText.leadingAnchor, constant: -10),
             copyButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
         ])
         
@@ -124,5 +144,21 @@ class TrackingNumberViewController: UIViewController {
             recordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             recordButton.heightAnchor.constraint(equalToConstant: 50)
         ])
+    }
+}
+
+extension UIColor {
+    convenience init(hex: String) {
+        let hexString = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        let scanner = Scanner(string: hexString)
+        if hexString.hasPrefix("#") {
+            scanner.scanLocation = 1
+        }
+        var color: UInt64 = 0
+        scanner.scanHexInt64(&color)
+        let r = CGFloat((color & 0xFF0000) >> 16) / 255.0
+        let g = CGFloat((color & 0x00FF00) >> 8) / 255.0
+        let b = CGFloat(color & 0x0000FF) / 255.0
+        self.init(red: r, green: g, blue: b, alpha: 1.0)
     }
 }
