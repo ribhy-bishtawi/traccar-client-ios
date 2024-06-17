@@ -72,6 +72,8 @@
 		5E716A2A1F63A60800A2DBC3 /* ProtocolFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProtocolFormatter.swift; sourceTree = "<group>"; };
 		5E716A2D1F63A7A200A2DBC3 /* ProtocolFormatterTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProtocolFormatterTests.swift; sourceTree = "<group>"; };
 		5E716A2F1F63A9F600A2DBC3 /* RequestManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestManagerTests.swift; sourceTree = "<group>"; };
+		80C670582C208CCE00A8AC1F /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/MainStoryboard.strings; sourceTree = "<group>"; };
+		80C670592C208CCF00A8AC1F /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		80CD92592C13B73D00F3CFED /* TrackingNumberViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackingNumberViewController.swift; sourceTree = "<group>"; };
 		CB4197921F674A3E008F301C /* DatabaseHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DatabaseHelper.swift; sourceTree = "<group>"; };
 		CB4197941F675518008F301C /* CoreDataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataTests.swift; sourceTree = "<group>"; };
@@ -329,6 +331,7 @@
 				zh,
 				ko,
 				ja,
+				ar,
 			);
 			mainGroup = CED4870F17DB1BF6007FCF57;
 			packageReferences = (
@@ -446,6 +449,7 @@
 				CE4B81061EC71D3600D1C41D /* zh */,
 				CE4B81081EC71D4300D1C41D /* ko */,
 				CE4B810A1EC71D4800D1C41D /* ja */,
+				80C670582C208CCE00A8AC1F /* ar */,
 			);
 			name = MainStoryboard.storyboard;
 			sourceTree = "<group>";
@@ -466,6 +470,7 @@
 				CE4B81071EC71D3600D1C41D /* zh */,
 				CE4B81091EC71D4300D1C41D /* ko */,
 				CE4B810B1EC71D4800D1C41D /* ja */,
+				80C670592C208CCF00A8AC1F /* ar */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

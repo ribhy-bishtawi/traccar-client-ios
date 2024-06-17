@@ -7,7 +7,7 @@
 "Invalid server address" = "Invalid server address";
 "Invalid server port" = "Invalid server port";
 "Invalid frequency value" = "Invalid frequency value";
-"Tracking number" = "Tracking Number";
-"Start tracking"= "Start Tracking";
-"Stop tacking"= "Stop Tracking";
-"Settings" = "Settings";
+"Tracking number" ="رقم التتبع";
+"Start tracking"= "بدأ التتبع";
+"Stop tracking"= "إيقاف التتبع";
+"Settings" = "الإعدادات";
