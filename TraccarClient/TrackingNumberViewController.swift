@@ -24,47 +24,50 @@ class TrackingNumberViewController: UIViewController {
             trackingNumberText.text = identifier
         }
 
-//         Ensure the layout is RTL
-//        if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
-//            adjustForRTL()
-//        }
+        // Add observer for app becoming active
+        NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive), name: UIApplication.didBecomeActiveNotification, object: nil)
     }
+    
+    deinit {
+        // Remove observer
+        NotificationCenter.default.removeObserver(self, name: UIApplication.didBecomeActiveNotification, object: nil)
+    }
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         updateLogoPosition()
     }
 
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateUIBasedOnTrackingStatus()
     }
-    
-    
+
+    @objc func appDidBecomeActive() {
+        updateUIBasedOnTrackingStatus()
+    }
+
     func updateUIBasedOnTrackingStatus() {
         let userDefaults = UserDefaults.standard
         let isTrackingActive = userDefaults.bool(forKey: "service_status_preference")
-
+        
         if isTrackingActive {
-            print("hrer")
-            if recordButton.backgroundColor != UIColor(hex: "#FB1D1D") {
-                recordButton.backgroundColor = UIColor(hex: "#FB1D1D")
-                recordButton.setTitle(NSLocalizedString("Stop tracking", comment: ""), for: .normal) // Arabic for "Stop Tracking"
-                let recordingIcon = UIImage(systemName: "stop.circle.fill")?.withRenderingMode(.alwaysTemplate)
-                recordButton.setImage(recordingIcon, for: .normal)
-                startRippleEffect()
-            }
+            print("Tracking is active")
+            recordButton.backgroundColor = UIColor(hex: "#FB1D1D")
+            recordButton.setTitle(NSLocalizedString("Stop tracking",comment: ""), for: .normal) // Arabic for "Stop Tracking"
+            let recordingIcon = UIImage(systemName: "stop.circle.fill")?.withRenderingMode(.alwaysTemplate)
+            recordButton.setImage(recordingIcon, for: .normal)
+            startRippleEffect()
         } else {
-            if recordButton.backgroundColor != UIColor(hex: "#219173") {
-                recordButton.backgroundColor = UIColor(hex: "#219173")
-                recordButton.setTitle(NSLocalizedString("Start tracking", comment: ""), for: .normal) // Arabic for "Start Tracking"
-                let pauseIcon = UIImage(systemName: "pause.circle.fill")?.withRenderingMode(.alwaysTemplate)
-                recordButton.setImage(pauseIcon, for: .normal)
-                stopRippleEffect()
-            }
+            print("Tracking is not active")
+            recordButton.backgroundColor = UIColor(hex: "#219173")
+            recordButton.setTitle(NSLocalizedString("Start tracking",comment: ""), for: .normal) // Arabic for "Start Tracking"
+            let pauseIcon = UIImage(systemName: "pause.circle.fill")?.withRenderingMode(.alwaysTemplate)
+            recordButton.setImage(pauseIcon, for: .normal)
+            stopRippleEffect()
         }
     }
-    
+
     func setupUI() {
         // Set up image view
         imageView.image = UIImage(named: "Background") // Replace with your image name
@@ -89,16 +92,13 @@ class TrackingNumberViewController: UIViewController {
         view.addSubview(containerView)
         
         // Set up tracking number label
-        trackingNumberLabel.text = NSLocalizedString("Tracking number",comment: "") // Arabic for "Tracking Number:"
+        trackingNumberLabel.text = NSLocalizedString("Tracking number", comment: "") // Arabic for "Tracking Number:"
         trackingNumberLabel.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(trackingNumberLabel)
 
         // Set up tracking number text
         trackingNumberText.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(trackingNumberText)
-        
-
-       
         
         // Set up copy button
         let customIcon = UIImage(named: "copy_icon")?.withRenderingMode(.alwaysTemplate)
@@ -108,9 +108,8 @@ class TrackingNumberViewController: UIViewController {
         copyButton.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(copyButton)
         
-        
         // Set up record button
-        recordButton.setTitle(NSLocalizedString("Start tracking",comment: ""), for: .normal) // Arabic for "Start Tracking"
+        recordButton.setTitle(NSLocalizedString("Start tracking", comment: ""), for: .normal) // Arabic for "Start Tracking"
         recordButton.backgroundColor = UIColor(hex: "#219173")
         recordButton.setTitleColor(.white, for: .normal)
         recordButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 20) // Add space between text and image
@@ -125,9 +124,8 @@ class TrackingNumberViewController: UIViewController {
         recordButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(recordButton)
         
-        
-        // Set up navigate buttonGo to
-        navigateButton.setTitle(NSLocalizedString("Settings",comment: ""), for: .normal)
+        // Set up navigate button
+        navigateButton.setTitle(NSLocalizedString("Settings", comment: ""), for: .normal)
         navigateButton.backgroundColor = UIColor.white
         navigateButton.setTitleColor(.black, for: .normal)
         navigateButton.layer.cornerRadius = 10
@@ -145,7 +143,6 @@ class TrackingNumberViewController: UIViewController {
         navigationController?.pushViewController(nextViewController, animated: true)
     }
 
-    
     func adjustForRTL() {
         if UIApplication.shared.userInterfaceLayoutDirection == .rightToLeft {
             trackingNumberLabel.textAlignment = .right
@@ -158,7 +155,6 @@ class TrackingNumberViewController: UIViewController {
         }
     }
 
-    
     @objc func copyButtonTapped() {
         // Copy the text to the clipboard
         UIPasteboard.general.string = trackingNumberText.text
@@ -169,7 +165,7 @@ class TrackingNumberViewController: UIViewController {
         
         if recordButton.backgroundColor == UIColor(hex: "#219173") {
             recordButton.backgroundColor = UIColor(hex: "#FB1D1D")
-            recordButton.setTitle(NSLocalizedString("Stop tracking",comment: ""), for: .normal) // Arabic for "Stop Tracking"
+            recordButton.setTitle(NSLocalizedString("Stop tracking", comment: ""), for: .normal) // Arabic for "Stop Tracking"
             // Add recording icon
             let recordingIcon = UIImage(systemName: "stop.circle.fill")?.withRenderingMode(.alwaysTemplate)
             recordButton.setImage(recordingIcon, for: .normal)
@@ -196,7 +192,7 @@ class TrackingNumberViewController: UIViewController {
             
         } else {
             recordButton.backgroundColor = UIColor(hex: "#219173")
-            recordButton.setTitle(NSLocalizedString("Start tracking",comment: ""), for: .normal) // Arabic for "Start Tracking"
+            recordButton.setTitle(NSLocalizedString("Start tracking", comment: ""), for: .normal) // Arabic for "Start Tracking"
             // Add pause icon
             let pauseIcon = UIImage(systemName: "pause.circle.fill")?.withRenderingMode(.alwaysTemplate)
             recordButton.setImage(pauseIcon, for: .normal)
@@ -212,7 +208,6 @@ class TrackingNumberViewController: UIViewController {
         }
     }
 
-    
     func startRippleEffect() {
         rippleLayer?.removeFromSuperlayer() // Remove existing ripple layer if any
         
@@ -221,7 +216,6 @@ class TrackingNumberViewController: UIViewController {
         view.layer.insertSublayer(rippleLayer, below: logoImageView.layer)
         
         let circle = CALayer()
-        
         circle.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
         circle.position = logoImageView.center
         circle.cornerRadius = 50
@@ -252,6 +246,7 @@ class TrackingNumberViewController: UIViewController {
 
     func stopRippleEffect() {
         rippleLayer?.removeFromSuperlayer()
+        rippleLayer = nil
     }
     
     func showError(_ message: String) {
@@ -296,7 +291,6 @@ class TrackingNumberViewController: UIViewController {
             copyButton.heightAnchor.constraint(equalToConstant: 24)
         ])
 
-
         // Record button constraints to ensure it is fully visible and within the safe area
         NSLayoutConstraint.activate([
             recordButton.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 10), // Space just below the containerView
@@ -313,12 +307,12 @@ class TrackingNumberViewController: UIViewController {
             navigateButton.heightAnchor.constraint(equalToConstant: 50) // Set a fixed height for the navigate button
         ])
     }
+    
     func updateLogoPosition() {
         // Adjust centerYAnchor based on the actual size of imageView
         let centerYConstraint = logoImageView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor, constant: -imageView.frame.size.height * 0.25)
         centerYConstraint.isActive = true
     }
-
 }
 
 extension UIColor {
