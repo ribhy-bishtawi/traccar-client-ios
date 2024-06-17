@@ -10,7 +10,8 @@ class TrackingNumberViewController: UIViewController {
     let copyButton = UIButton(type: .system)
     let recordButton = UIButton(type: .system)
     var rippleLayer: CAReplicatorLayer?
-    
+    let navigateButton = UIButton(type: .system)
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -94,9 +95,26 @@ class TrackingNumberViewController: UIViewController {
         recordButton.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(recordButton)
         
+        
+        // Set up navigate buttonGo to
+        navigateButton.setTitle("الأعدادات", for: .normal)
+        navigateButton.backgroundColor = UIColor.white
+        navigateButton.setTitleColor(.black, for: .normal)
+        navigateButton.layer.cornerRadius = 10
+        navigateButton.clipsToBounds = true
+        navigateButton.addTarget(self, action: #selector(navigateButtonTapped), for: .touchUpInside)
+        navigateButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(navigateButton)
+
         // Set up constraints
         setupConstraints()
     }
+    
+    @objc func navigateButtonTapped() {
+        let nextViewController = MainViewController() // Replace with your next view controller
+        navigationController?.pushViewController(nextViewController, animated: true)
+    }
+
     
     func adjustForRTL() {
         trackingNumberLabel.textAlignment = .right
@@ -210,22 +228,22 @@ class TrackingNumberViewController: UIViewController {
 
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            imageView.topAnchor.constraint(equalTo: view.topAnchor),
-            imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            // Setup initial constraints for logoImageView without centerY constraint
-            logoImageView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
-            logoImageView.widthAnchor.constraint(equalToConstant: 200),
-            logoImageView.heightAnchor.constraint(equalToConstant: 200)
-        ])
+             imageView.topAnchor.constraint(equalTo: view.topAnchor),
+             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+             imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+             // Setup initial constraints for logoImageView without centerY constraint
+             logoImageView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+             logoImageView.widthAnchor.constraint(equalToConstant: 200),
+             logoImageView.heightAnchor.constraint(equalToConstant: 200)
+         ])
 
          // Container view constraints to overlay over the image view at the bottom
          NSLayoutConstraint.activate([
              containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
              containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
              containerView.heightAnchor.constraint(equalToConstant: 60),
-             containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -70) // Adjusted to be above the safe area bottom
+             containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100) // Adjusted to be above the safe area bottom
          ])
          
          // Tracking number label constraints within the container view
@@ -253,8 +271,18 @@ class TrackingNumberViewController: UIViewController {
              recordButton.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 10), // Space just below the containerView
              recordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
              recordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-             recordButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10) // Ensuring it's within the safe area
+             recordButton.heightAnchor.constraint(equalToConstant: 50) // Set a fixed height for the record button
          ])
+         
+         // Navigate button constraints to position it below the record button
+         NSLayoutConstraint.activate([
+             navigateButton.topAnchor.constraint(equalTo: recordButton.bottomAnchor, constant: 10), // Space just below the recordButton
+             navigateButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+             navigateButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+             navigateButton.heightAnchor.constraint(equalToConstant: 50) // Set a fixed height for the navigate button
+         ])
+
+
     }
     func updateLogoPosition() {
         // Adjust centerYAnchor based on the actual size of imageView
