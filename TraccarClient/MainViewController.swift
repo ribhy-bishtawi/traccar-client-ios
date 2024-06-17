@@ -24,6 +24,7 @@ class MainViewController: IASKAppSettingsViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = NSLocalizedString("Bazytrack Client", comment: "")
+        self.navigationItem.rightBarButtonItem = nil
         showCreditsFooter = false
         neverShowPrivacySettings = true
     }

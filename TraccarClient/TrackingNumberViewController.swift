@@ -34,11 +34,29 @@ class TrackingNumberViewController: UIViewController {
         updateLogoPosition()
     }
 
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
 
-    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateUIBasedOnTrackingStatus()
+    }
+    func updateUIBasedOnTrackingStatus() {
+        let userDefaults = UserDefaults.standard
+        let isTrackingActive = userDefaults.bool(forKey: "service_status_preference")
+        
+        if isTrackingActive {
+            recordButton.backgroundColor = UIColor(hex: "#FB1D1D")
+            recordButton.setTitle("إيقاف التتبع", for: .normal) // Arabic for "Stop Tracking"
+            let recordingIcon = UIImage(systemName: "stop.circle.fill")?.withRenderingMode(.alwaysTemplate)
+            recordButton.setImage(recordingIcon, for: .normal)
+            startRippleEffect()
+        } else {
+            recordButton.backgroundColor = UIColor(hex: "#219173")
+            recordButton.setTitle("بدأ التتبع", for: .normal) // Arabic for "Start Tracking"
+            let pauseIcon = UIImage(systemName: "pause.circle.fill")?.withRenderingMode(.alwaysTemplate)
+            recordButton.setImage(pauseIcon, for: .normal)
+            stopRippleEffect()
+        }
+    }
     func setupUI() {
         // Set up image view
         imageView.image = UIImage(named: "Background") // Replace with your image name
