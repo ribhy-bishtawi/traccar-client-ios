@@ -28,6 +28,15 @@ class TrackingNumberViewController: UIViewController {
             adjustForRTL()
         }
     }
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateLogoPosition()
+    }
+
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
+
     
     func setupUI() {
         // Set up image view
@@ -39,7 +48,7 @@ class TrackingNumberViewController: UIViewController {
         // Set up logo image view
         logoImageView.image = UIImage(named: "logo") // Replace with your logo image name
         logoImageView.contentMode = .scaleAspectFit
-        logoImageView.layer.cornerRadius = 50 // Adjust the radius to half of the logo's width/height for a circular shape
+        logoImageView.layer.cornerRadius = 100 // Adjust the radius to half of the logo's width/height for a circular shape
         logoImageView.clipsToBounds = true
         logoImageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.addSubview(logoImageView) // Add to imageView instead of view
@@ -48,7 +57,7 @@ class TrackingNumberViewController: UIViewController {
         containerView.backgroundColor = UIColor.white.withAlphaComponent(0.95) // Slightly transparent
         containerView.layer.cornerRadius = 10
         containerView.layer.borderWidth = 1
-        containerView.layer.borderColor = UIColor.lightGray.cgColor
+        containerView.layer.borderColor = UIColor.white.cgColor
         containerView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(containerView)
         
@@ -62,9 +71,9 @@ class TrackingNumberViewController: UIViewController {
         containerView.addSubview(trackingNumberText)
         
         // Set up copy button
-        let copyIcon = UIImage(systemName: "doc.on.doc")?.withRenderingMode(.alwaysTemplate)
-        copyButton.setImage(copyIcon, for: .normal)
-        copyButton.tintColor = .systemBlue
+        let customIcon = UIImage(named: "copy_icon")?.withRenderingMode(.alwaysTemplate)
+        copyButton.setImage(customIcon, for: .normal)
+        copyButton.tintColor = UIColor(hex: "#D9D9D9") // Change to your desired color
         copyButton.addTarget(self, action: #selector(copyButtonTapped), for: .touchUpInside)
         copyButton.translatesAutoresizingMaskIntoConstraints = false
         containerView.addSubview(copyButton)
@@ -107,11 +116,10 @@ class TrackingNumberViewController: UIViewController {
             recordButton.backgroundColor = UIColor(hex: "#FB1D1D")
             recordButton.setTitle("إيقاف التتبع", for: .normal) // Arabic for "Stop Tracking"
             // Add recording icon
-            let recordingIcon = UIImage(systemName: "record.circle.fill")?.withRenderingMode(.alwaysTemplate)
+            let recordingIcon = UIImage(systemName: "stop.circle.fill")?.withRenderingMode(.alwaysTemplate)
             recordButton.setImage(recordingIcon, for: .normal)
-            recordButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8) // Add space between image and text
-            recordButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0) // Add space between text and image
-            
+            recordButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 20) // Add space between text and image
+
             // Start tracking
             let url = userDefaults.string(forKey: "server_url_preference")
             let frequency = userDefaults.integer(forKey: "frequency_preference")
@@ -137,9 +145,8 @@ class TrackingNumberViewController: UIViewController {
             // Add pause icon
             let pauseIcon = UIImage(systemName: "pause.circle.fill")?.withRenderingMode(.alwaysTemplate)
             recordButton.setImage(pauseIcon, for: .normal)
-            recordButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 8) // Add space between image and text
-            recordButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0) // Add space between text and image
-            
+            recordButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 20) // Add space between text and image
+
             // Stop tracking
             AppDelegate.instance.trackingController?.stop()
             AppDelegate.instance.trackingController = nil
@@ -149,6 +156,7 @@ class TrackingNumberViewController: UIViewController {
             stopRippleEffect()
         }
     }
+
     
     func startRippleEffect() {
         rippleLayer?.removeFromSuperlayer() // Remove existing ripple layer if any
@@ -158,6 +166,7 @@ class TrackingNumberViewController: UIViewController {
         view.layer.insertSublayer(rippleLayer, below: logoImageView.layer)
         
         let circle = CALayer()
+        
         circle.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
         circle.position = logoImageView.center
         circle.cornerRadius = 50
@@ -200,58 +209,59 @@ class TrackingNumberViewController: UIViewController {
     }
 
     func setupConstraints() {
-        // Image view constraints
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: view.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            imageView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.8) // Image view takes 80% of the screen height
-        ])
-        
-        // Logo image view constraints
-        NSLayoutConstraint.activate([
+            imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            // Setup initial constraints for logoImageView without centerY constraint
             logoImageView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
-            logoImageView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
-            logoImageView.widthAnchor.constraint(equalToConstant: 100),
-            logoImageView.heightAnchor.constraint(equalToConstant: 100)
+            logoImageView.widthAnchor.constraint(equalToConstant: 200),
+            logoImageView.heightAnchor.constraint(equalToConstant: 200)
         ])
-        
-        // Container view constraints
-        NSLayoutConstraint.activate([
-            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            containerView.heightAnchor.constraint(equalToConstant: 60),
-            containerView.bottomAnchor.constraint(equalTo: imageView.bottomAnchor, constant: -10) // Positioned within the image view
-        ])
-        
-        // Tracking number label constraints
-        NSLayoutConstraint.activate([
-            trackingNumberLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
-            trackingNumberLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
-        ])
-        
-        // Tracking number text constraints
-        NSLayoutConstraint.activate([
-            trackingNumberText.leadingAnchor.constraint(equalTo: copyButton.trailingAnchor, constant: 10),
-            trackingNumberText.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
-        ])
-        
-        // Copy button constraints
-        NSLayoutConstraint.activate([
-            copyButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
-            copyButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            copyButton.widthAnchor.constraint(equalToConstant: 24), // Adjust width for the icon
-            copyButton.heightAnchor.constraint(equalToConstant: 24) // Adjust height for the icon
-        ])
-        
-        // Record button constraints
-        NSLayoutConstraint.activate([
-            recordButton.topAnchor.constraint(equalTo: imageView.bottomAnchor, constant: 20), // Space between image view and button
-            recordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            recordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            recordButton.heightAnchor.constraint(equalToConstant: 50)
-        ])
+
+         // Container view constraints to overlay over the image view at the bottom
+         NSLayoutConstraint.activate([
+             containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+             containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+             containerView.heightAnchor.constraint(equalToConstant: 60),
+             containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -70) // Adjusted to be above the safe area bottom
+         ])
+         
+         // Tracking number label constraints within the container view
+         NSLayoutConstraint.activate([
+             trackingNumberLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -10),
+             trackingNumberLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
+         ])
+         
+         // Tracking number text constraints within the container view
+         NSLayoutConstraint.activate([
+             trackingNumberText.leadingAnchor.constraint(equalTo: copyButton.trailingAnchor, constant: 10),
+             trackingNumberText.centerYAnchor.constraint(equalTo: containerView.centerYAnchor)
+         ])
+         
+         // Copy button constraints within the container view
+         NSLayoutConstraint.activate([
+             copyButton.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 10),
+             copyButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+             copyButton.widthAnchor.constraint(equalToConstant: 24),
+             copyButton.heightAnchor.constraint(equalToConstant: 24)
+         ])
+         
+         // Record button constraints to ensure it is fully visible and within the safe area
+         NSLayoutConstraint.activate([
+             recordButton.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 10), // Space just below the containerView
+             recordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+             recordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+             recordButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10) // Ensuring it's within the safe area
+         ])
     }
+    func updateLogoPosition() {
+        // Adjust centerYAnchor based on the actual size of imageView
+        let centerYConstraint = logoImageView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor, constant: -imageView.frame.size.height * 0.25)
+        centerYConstraint.isActive = true
+    }
+
 }
 
 extension UIColor {
