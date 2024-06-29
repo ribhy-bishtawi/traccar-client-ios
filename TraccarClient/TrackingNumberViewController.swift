@@ -75,8 +75,8 @@ class TrackingNumberViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(imageView)
         
-        // Set up logo image view
-        logoImageView.image = UIImage(named: "logo") // Replace with your logo image name
+//        // Set up logo mage view
+//        logoImageView.image = UIImage(named: "logo") // Replace with your logo image name
         logoImageView.contentMode = .scaleAspectFit
         logoImageView.layer.cornerRadius = 100 // Adjust the radius to half of the logo's width/height for a circular shape
         logoImageView.clipsToBounds = true
@@ -215,6 +215,7 @@ class TrackingNumberViewController: UIViewController {
         rippleLayer.frame = view.bounds
         view.layer.insertSublayer(rippleLayer, below: logoImageView.layer)
         
+        
         let circle = CALayer()
         circle.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
         circle.position = logoImageView.center
@@ -264,7 +265,7 @@ class TrackingNumberViewController: UIViewController {
             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            // Setup initial constraints for logoImageView without centerY constraint
+//            // Setup initial constraints for logoImageView without centerY constraint
             logoImageView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
             logoImageView.widthAnchor.constraint(equalToConstant: 200),
             logoImageView.heightAnchor.constraint(equalToConstant: 200)
