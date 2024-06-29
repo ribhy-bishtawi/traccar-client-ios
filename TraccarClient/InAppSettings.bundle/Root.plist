@@ -32,7 +32,7 @@
 		</dict>
 		<dict>
 			<key>DefaultValue</key>
-			<string>http://traccar.treesal.com</string>
+			<string>https://go.bazytrack.jo</string>
 			<key>Type</key>
 			<string>PSTextFieldSpecifier</string>
 			<key>Title</key>
