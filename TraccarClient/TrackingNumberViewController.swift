@@ -76,7 +76,7 @@ class TrackingNumberViewController: UIViewController {
         view.addSubview(imageView)
         
         // Set up logo image view
-        logoImageView.image = UIImage(named: "logo") // Replace with your logo image name
+//        logoImageView.image = UIImage(named: "logo") // Replace with your logo image name
         logoImageView.contentMode = .scaleAspectFit
         logoImageView.layer.cornerRadius = 100 // Adjust the radius to half of the logo's width/height for a circular shape
         logoImageView.clipsToBounds = true
