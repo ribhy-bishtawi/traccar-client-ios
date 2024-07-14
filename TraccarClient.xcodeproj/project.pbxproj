@@ -541,6 +541,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TraccarClient/TraccarClient-Prefix.pch";
 				INFOPLIST_FILE = "TraccarClient/TraccarClient-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Weenak;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -548,7 +549,7 @@
 				);
 				MARKETING_VERSION = 7.1;
 				OTHER_SWIFT_FLAGS = "-D FIREBASE";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.traccar.client.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bazytrack.weenak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -710,13 +711,14 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TraccarClient/TraccarClient-Prefix.pch";
 				INFOPLIST_FILE = "TraccarClient/TraccarClient-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Weenak;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 7.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.traccar.client.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bazytrack.weenak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -742,13 +744,14 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "TraccarClient/TraccarClient-Prefix.pch";
 				INFOPLIST_FILE = "TraccarClient/TraccarClient-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = Weenak;
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 7.1;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.traccar.client.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.bazytrack.weenak;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
