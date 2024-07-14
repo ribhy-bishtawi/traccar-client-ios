@@ -54,14 +54,14 @@ class TrackingNumberViewController: UIViewController {
         if isTrackingActive {
             print("Tracking is active")
             recordButton.backgroundColor = UIColor(hex: "#FB1D1D")
-            recordButton.setTitle(NSLocalizedString("Stop tracking",comment: ""), for: .normal) // Arabic for "Stop Tracking"
+            recordButton.setTitle(NSLocalizedString("Stop tracking", comment: ""), for: .normal) // Arabic for "Stop Tracking"
             let recordingIcon = UIImage(systemName: "stop.circle.fill")?.withRenderingMode(.alwaysTemplate)
             recordButton.setImage(recordingIcon, for: .normal)
             startRippleEffect()
         } else {
             print("Tracking is not active")
             recordButton.backgroundColor = UIColor(hex: "#219173")
-            recordButton.setTitle(NSLocalizedString("Start tracking",comment: ""), for: .normal) // Arabic for "Start Tracking"
+            recordButton.setTitle(NSLocalizedString("Start tracking", comment: ""), for: .normal) // Arabic for "Start Tracking"
             let pauseIcon = UIImage(systemName: "pause.circle.fill")?.withRenderingMode(.alwaysTemplate)
             recordButton.setImage(pauseIcon, for: .normal)
             stopRippleEffect()
@@ -75,8 +75,8 @@ class TrackingNumberViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(imageView)
         
-//        // Set up logo mage view
-//        logoImageView.image = UIImage(named: "logo") // Replace with your logo image name
+        // Set up logo image view
+        logoImageView.image = UIImage(named: "logo") // Replace with your logo image name
         logoImageView.contentMode = .scaleAspectFit
         logoImageView.layer.cornerRadius = 100 // Adjust the radius to half of the logo's width/height for a circular shape
         logoImageView.clipsToBounds = true
@@ -260,12 +260,14 @@ class TrackingNumberViewController: UIViewController {
     }
 
     func setupConstraints() {
+        let safeArea = view.safeAreaLayoutGuide
+
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: view.topAnchor),
             imageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             imageView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-//            // Setup initial constraints for logoImageView without centerY constraint
+            
             logoImageView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
             logoImageView.widthAnchor.constraint(equalToConstant: 200),
             logoImageView.heightAnchor.constraint(equalToConstant: 200)
@@ -273,10 +275,10 @@ class TrackingNumberViewController: UIViewController {
 
         // Container view constraints to overlay over the image view at the bottom
         NSLayoutConstraint.activate([
-            containerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            containerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            containerView.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+            containerView.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
             containerView.heightAnchor.constraint(equalToConstant: 60),
-            containerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -100) // Adjusted to be above the safe area bottom
+            containerView.bottomAnchor.constraint(equalTo: recordButton.topAnchor, constant: -20) // Space above the record button
         ])
         
         NSLayoutConstraint.activate([
@@ -294,21 +296,22 @@ class TrackingNumberViewController: UIViewController {
 
         // Record button constraints to ensure it is fully visible and within the safe area
         NSLayoutConstraint.activate([
-            recordButton.topAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 10), // Space just below the containerView
-            recordButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            recordButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            recordButton.heightAnchor.constraint(equalToConstant: 50) // Set a fixed height for the record button
+            recordButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+            recordButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
+            recordButton.heightAnchor.constraint(equalToConstant: 50),
+            recordButton.bottomAnchor.constraint(equalTo: navigateButton.topAnchor, constant: -10) // Space above the navigate button
         ])
         
-        // Navigate button constraints to position it below the record button
+        // Navigate button constraints to position it above the safe area
         NSLayoutConstraint.activate([
-            navigateButton.topAnchor.constraint(equalTo: recordButton.bottomAnchor, constant: 10), // Space just below the recordButton
-            navigateButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            navigateButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            navigateButton.heightAnchor.constraint(equalToConstant: 50) // Set a fixed height for the navigate button
+            navigateButton.leadingAnchor.constraint(equalTo: safeArea.leadingAnchor, constant: 20),
+            navigateButton.trailingAnchor.constraint(equalTo: safeArea.trailingAnchor, constant: -20),
+            navigateButton.heightAnchor.constraint(equalToConstant: 50),
+            navigateButton.bottomAnchor.constraint(equalTo: safeArea.bottomAnchor, constant: -20) // Ensuring it's above the safe area bottom
         ])
     }
-    
+
+
     func updateLogoPosition() {
         // Adjust centerYAnchor based on the actual size of imageView
         let centerYConstraint = logoImageView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor, constant: -imageView.frame.size.height * 0.25)
